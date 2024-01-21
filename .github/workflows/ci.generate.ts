@@ -682,6 +682,7 @@ const ci = {
           ].join("\n"),
           run: [
             "cd target/release",
+            "copy deno deno-x86_64-unknown-linux-gnu",
             "zip -r deno-x86_64-unknown-linux-gnu.zip deno",
             "./deno types > lib.deno.d.ts",
           ].join("\n"),
@@ -706,6 +707,7 @@ const ci = {
             "--p12-file=<(echo $APPLE_CODESIGN_KEY | base64 -d) " +
             "--entitlements-xml-file=cli/entitlements.plist",
             "cd target/release",
+            "copy deno deno-x86_64-apple-darwin",
             "zip -r deno-x86_64-apple-darwin.zip deno",
           ]
             .join("\n"),
@@ -730,6 +732,7 @@ const ci = {
             "--p12-file=<(echo $APPLE_CODESIGN_KEY | base64 -d) " +
             "--entitlements-xml-file=cli/entitlements.plist",
             "cd target/release",
+            "copy deno deno-aarch64-apple-darwin",
             "zip -r deno-aarch64-apple-darwin.zip deno",
           ]
             .join("\n"),
@@ -743,8 +746,10 @@ const ci = {
             "github.repository == 'denoland/deno'",
           ].join("\n"),
           shell: "pwsh",
-          run:
+          run: [
+            "copy target/release/deno.exe -DestinationPath target/release/deno-x86_64-pc-windows-msvc.exe",
             "Compress-Archive -CompressionLevel Optimal -Force -Path target/release/deno.exe -DestinationPath target/release/deno-x86_64-pc-windows-msvc.zip",
+          ].join("\n"),
         },
         {
           name: "Upload canary to dl.deno.land (unix)",
@@ -1014,9 +1019,13 @@ const ci = {
           with: {
             files: [
               "target/release/deno-x86_64-pc-windows-msvc.zip",
+              "target/release/deno-x86_64-pc-windows-msvc.exe",
               "target/release/deno-x86_64-unknown-linux-gnu.zip",
+              "target/release/deno-x86_64-unknown-linux-gnu",
               "target/release/deno-x86_64-apple-darwin.zip",
+              "target/release/deno-x86_64-apple-darwin",
               "target/release/deno-aarch64-apple-darwin.zip",
+              "target/release/deno-aarch64-apple-darwin",
               "target/release/deno_src.tar.gz",
               "target/release/lib.deno.d.ts",
             ].join("\n"),
